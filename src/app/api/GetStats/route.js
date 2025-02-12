@@ -1,21 +1,82 @@
-import DigitalCurrency from "@/schemas/crypto.model";
 import dbConnect from "@/lib/dbConnect";
+import DigitalCurrency from "@/schemas/crypto.model";
+import axios from "axios";
 
 export async function POST(request) {
-        await dbConnect();
+    await dbConnect();
     try {
-        const { symbol } = await request.json();
-        const stats = await DigitalCurrency.find({"symbol": symbol})
-        .sort({createdAt: 1})  // Sort by `createdAt` in ascending order
-        .limit(1); // Only retrieve one record
+        const { symbol, vs_currency = "inr" } = await request.json();
 
-        // After processing all data, send a response
-        return new Response(JSON.stringify({ status: true, data: stats, message: "Data saved successfully." }), {
-            status: 200,
-        });
+        // Fetch the last stored record for the given symbol
+        let lastRecord = await DigitalCurrency.findOne({ symbol }).sort({ createdAt: -1 });
+
+        const now = new Date();
+        const lastUpdated = lastRecord?.last_updated ? new Date(lastRecord.last_updated) : null;
+        const isDataOutdated = !lastUpdated || now.toISOString().slice(0, 10) !== lastUpdated.toISOString().slice(0, 10);
+
+        if (!lastRecord || isDataOutdated) {
+            if (lastRecord) {
+                await DigitalCurrency.deleteOne({ _id: lastRecord._id });
+                console.log(`Deleted outdated record for ${symbol}`);
+            }
+
+            // Fetch fresh data from CoinGecko API
+            const url = "https://api.coingecko.com/api/v3/coins/markets";
+            const { data } = await axios.get(url, {
+                params: {
+                    vs_currency,
+                    ids: symbol.toLowerCase(),
+                    price_change_percentage: "24h,7d,30d,1y",
+                },
+            });
+
+            if (!data || data.length === 0) {
+                return new Response(JSON.stringify({ status: false, message: "No data found from API" }), { status: 404 });
+            }
+
+            const coin = data[0];
+
+            // Save the new record in MongoDB
+            lastRecord = await DigitalCurrency.create({
+                id: coin.id,
+                name: coin.name,
+                symbol: coin.symbol,
+                current_price: coin.current_price,
+                market_cap: coin.market_cap,
+                market_cap_rank: coin.market_cap_rank,
+                fully_diluted_valuation: coin.fully_diluted_valuation,
+                total_volume: coin.total_volume,
+                high_24h: coin.high_24h,
+                low_24h: coin.low_24h,
+                price_change_24h: coin.price_change_24h,
+                price_change_percentage_24h: coin.price_change_percentage_24h,
+                market_cap_change_24h: coin.market_cap_change_24h,
+                market_cap_change_percentage_24h: coin.market_cap_change_percentage_24h,
+                circulating_supply: coin.circulating_supply,
+                total_supply: coin.total_supply,
+                max_supply: coin.max_supply,
+                ath: coin.ath,
+                ath_change_percentage: coin.ath_change_percentage,
+                ath_date: new Date(coin.ath_date),
+                atl: coin.atl,
+                atl_change_percentage: coin.atl_change_percentage,
+                price_change_percentage_1y_in_currency: coin.price_change_percentage_1y_in_currency,
+                price_change_percentage_24h_in_currency: coin.price_change_percentage_24h_in_currency,
+                price_change_percentage_30d_in_currency: coin.price_change_percentage_30d_in_currency,
+                price_change_percentage_7d_in_currency: coin.price_change_percentage_7d_in_currency,
+                imageURL: coin.image,
+                last_updated: now,
+            });
+
+            console.log(`Updated record for ${symbol}`);
+        }
+
+        return new Response(
+            JSON.stringify({ status: true, data: lastRecord, message: "Data retrieved successfully." }),
+            { status: 200 }
+        );
     } catch (error) {
-        console.error(error);
-        // Handle any error that occurs during the execution
+        console.error("Error:", error.message);
         return new Response(JSON.stringify({ status: false, message: error.message }), { status: 400 });
     }
 }

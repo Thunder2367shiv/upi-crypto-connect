@@ -9,20 +9,25 @@ export async function POST(request) {
     try {
         const { vs_currency, pageNumber } = await request.json();
         const batchSize = 10; // Fetch 10 coins at a time
-        let start = (pageNumber - 1) * batchSize;
-        let end = start + batchSize;
-
+        const start = (pageNumber - 1) * batchSize;
+        const end = Math.min(start + batchSize, rawdata.length);
         const savedData = [];
 
-        for (let i = start; i < rawdata.length && i < end; i += batchSize) {
+        if (start >= rawdata.length) {
+            return new Response(
+                JSON.stringify({ status: false, message: "Page number out of range." }),
+                { status: 400 }
+            );
+        }
+
+        for (let i = start; i < end; i += batchSize) {
             const ids = rawdata.slice(i, i + batchSize).map((coin) => coin.id).join(",");
             console.log("Fetching data for IDs:", ids);
 
             const url = "https://api.coingecko.com/api/v3/coins/markets";
-            
             const { data } = await axios.get(url, {
                 params: {
-                    ids,  // Now passing multiple IDs in one request
+                    ids,
                     vs_currency,
                     price_change_percentage: "24h,7d,30d,1y",
                 },
@@ -30,25 +35,25 @@ export async function POST(request) {
 
             console.log("Received data:", data);
 
-            for (let coin of data) {
-                const uniqueId = coin.id + coin.last_updated;
-                const existingRecord = await DigitalCurrency.findOne({ id: uniqueId });
-                if (existingRecord) continue;
+            for (const coin of data) {
+                const existingRecord = await DigitalCurrency.findOne({ id: coin.id });
 
-                const recordCount = await DigitalCurrency.countDocuments({ id: coin.id });
-
-                if (recordCount >= 100) {
-                    const lastUpdatedRecord = await DigitalCurrency.findOne({ id: coin.id })
-                        .sort({ createdAt: -1 })
-                        .limit(1);
-                    if (lastUpdatedRecord) {
-                        await DigitalCurrency.deleteOne({ _id: lastUpdatedRecord._id });
-                        console.log(`Deleted the last updated record for ${coin.id}`);
+                // Check if last_updated is valid and compare timestamps
+                if (existingRecord?.last_updated) {
+                    const lastUpdatedDate = new Date(existingRecord.last_updated);
+                    if (!isNaN(lastUpdatedDate.getTime()) && lastUpdatedDate.toISOString() === new Date().toISOString()) {
+                        console.log(`Skipping update for ${coin.id} as data is already up to date.`);
+                        continue;
                     }
                 }
 
+                if (existingRecord) {
+                    await DigitalCurrency.deleteOne({ _id: existingRecord._id });
+                    console.log(`Deleted old record for ${coin.id}`);
+                }
+
                 const savedCoin = await DigitalCurrency.create({
-                    id: uniqueId,
+                    id: coin.id,
                     name: coin.name,
                     symbol: coin.symbol,
                     current_price: coin.current_price,
@@ -75,14 +80,17 @@ export async function POST(request) {
                     price_change_percentage_30d_in_currency: coin.price_change_percentage_30d_in_currency,
                     price_change_percentage_7d_in_currency: coin.price_change_percentage_7d_in_currency,
                     imageURL: coin.image,
+                    last_updated: new Date(), // Ensure correct timestamp format
                 });
+
                 savedData.push(savedCoin);
             }
         }
 
-        return new Response(JSON.stringify({ status: true, data: savedData, message: "Data saved successfully." }), {
-            status: 200,
-        });
+        return new Response(
+            JSON.stringify({ status: true, data: savedData, message: "Data saved successfully." }),
+            { status: 200 }
+        );
     } catch (error) {
         console.error("Error:", error.message);
         return new Response(JSON.stringify({ status: false, message: error.message }), { status: 400 });
