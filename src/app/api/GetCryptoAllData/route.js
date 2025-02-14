@@ -86,7 +86,7 @@ export async function POST(request) {
                 savedData.push(savedCoin);
             }
         }
-
+        savedData.sort((a, b) => b.current_price - a.current_price);
         return new Response(
             JSON.stringify({ status: true, data: savedData, message: "Data saved successfully." }),
             { status: 200 }

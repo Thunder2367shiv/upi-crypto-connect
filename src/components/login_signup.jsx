@@ -133,7 +133,7 @@ const OtpLogin = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-black p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen  p-6">
       <div className="flex flex-col md:flex-row gap-8 w-full max-w-4xl">
         {/* Sign up on Left side */}
         <motion.div

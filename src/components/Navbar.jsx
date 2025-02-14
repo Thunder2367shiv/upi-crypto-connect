@@ -17,7 +17,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-900 shadow-lg rounded-xl mt-4 mx-auto max-w-5xl">
+    <nav className="bg-gray-900 shadow-lg fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-5xl m-3 rounded-xl px-2 z-50">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo Section */}
         <div className="flex items-center space-x-3">
@@ -26,9 +26,9 @@ const Navbar = () => {
             Upi-Crypto-Connect
           </Link>
         </div>
-
+        <div className="px-10"></div>
         {/* Desktop Menu */}
-        <div className="hidden md:flex space-x-6 items-center">
+        <div className=" hidden md:flex space-x-6 items-center">
           <Link className="text-white hover:text-green-400 transition font-bold" href="/">
             Home
           </Link>
@@ -36,10 +36,10 @@ const Navbar = () => {
             Contact
           </Link>
           <Link className="text-white hover:text-green-400 transition font-bold" href="/buy-upi">
-            Buy UPI
+            Buy-Crypto
           </Link>
           <Link className="text-white hover:text-green-400 transition font-bold" href="/info">
-            Info
+            Explore
           </Link>
 
           {/* Auth Buttons */}
