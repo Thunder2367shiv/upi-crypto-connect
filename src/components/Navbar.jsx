@@ -32,13 +32,13 @@ const Navbar = () => {
           <Link className="text-white hover:text-green-400 transition font-bold" href="/">
             Home
           </Link>
-          <Link className="text-white hover:text-green-400 transition font-bold" href="/contact">
+          <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/Contact">
             Contact
           </Link>
           <Link className="text-white hover:text-green-400 transition font-bold" href="/buy-upi">
             Buy-Crypto
           </Link>
-          <Link className="text-white hover:text-green-400 transition font-bold" href="/info">
+          <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/Explore">
             Explore
           </Link>
 
@@ -80,7 +80,7 @@ const Navbar = () => {
           </Link>
           <Link
             className="block py-3 px-6 text-white hover:text-green-400 transition"
-            href="/contact"
+            href="/pages/Contact"
             onClick={() => setIsOpen(false)}
           >
             Contact
@@ -94,10 +94,10 @@ const Navbar = () => {
           </Link>
           <Link
             className="block py-3 px-6 text-white hover:text-green-400 transition"
-            href="/info"
+            href="/pages/Explore"
             onClick={() => setIsOpen(false)}
           >
-            Info
+            Explore
           </Link>
 
           {/* Auth Buttons in Mobile Menu */}
