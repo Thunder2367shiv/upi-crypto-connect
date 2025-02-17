@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema(
             type: Number,
             required: [true, "Phone Number is required"],
             unique: true,
-        }
+        },
     },
     {
         timestamps: true, // 🔹 Auto-manages createdAt & updatedAt
