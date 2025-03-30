@@ -41,8 +41,10 @@ export async function POST(request) {
                 // Check if last_updated is valid and compare timestamps
                 if (existingRecord?.last_updated) {
                     const lastUpdatedDate = new Date(existingRecord.last_updated);
-                    if (!isNaN(lastUpdatedDate.getTime()) && lastUpdatedDate.toISOString() === new Date().toISOString()) {
+                    const currentDate = new Date(coin.last_updated);
+                    if (!isNaN(lastUpdatedDate.getTime()) && lastUpdatedDate.toISOString() === currentDate.toISOString()) {
                         console.log(`Skipping update for ${coin.id} as data is already up to date.`);
+                        savedData.push(existingRecord);
                         continue;
                     }
                 }
@@ -80,7 +82,7 @@ export async function POST(request) {
                     price_change_percentage_30d_in_currency: coin.price_change_percentage_30d_in_currency,
                     price_change_percentage_7d_in_currency: coin.price_change_percentage_7d_in_currency,
                     imageURL: coin.image,
-                    last_updated: new Date(), // Ensure correct timestamp format
+                    last_updated: new Date(coin.last_updated), // Ensure correct timestamp format
                 });
 
                 savedData.push(savedCoin);

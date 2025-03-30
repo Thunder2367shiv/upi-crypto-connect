@@ -9,18 +9,20 @@ const SearchResult = ({ vs_currency = "inr", crypto = "bitcoin" }) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [promptData, setPromptData] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
-            setLoading(true);
-            setError(null);
             try {
                 const response = await axios.post("/api/GetStats", { vs_currency, crypto });
-                if (response.data && response.data.status) {
+                if (response.data?.status) {
                     setData(response.data.data);
                 } else {
                     setError("No valid data received.");
                 }
+
+                const response1 = await axios.post("/api/OpenaiResult", { "prompt": crypto });
+                setPromptData(response1.data.data)
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -44,72 +46,51 @@ const SearchResult = ({ vs_currency = "inr", crypto = "bitcoin" }) => {
     }
 
     return (
-        <div className="min-h-screen text-white flex flex-col items-center p-8 pt-32">
-            {/* Header */}
-            <div className="text-center justify-center mb-8">
-                <motion.img 
-                    src={data.imageURL} 
-                    alt={data.name} 
-                    className="w-20 h-20 mb-4 rounded-full shadow-lg mx-auto" 
-                    animate={{ rotate: 360 }} 
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                />
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                    {data.name} ({data.symbol.toUpperCase()})
-                </h1>
-                <p className="text-xl mt-2 text-gray-400">Live Market Stats & Analytics</p>
-            </div>
+        <div className="min-h-screen text-white flex flex-col p-6 bg-gradient-to-br from-gray-900 to-gray-800">
 
-            {/* Graph & Percentage Changes */}
-            <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-8">
-                {/* Graph Section */}
-                <div className="flex-1 bg-gray-800 p-6 rounded-lg shadow-md">
-                    <h2 className="text-2xl font-bold text-gray-100 mb-4 text-center">Price Chart</h2>
-                    <BitcoinChart symbol={data.symbol} vs_currency={vs_currency} crypto={crypto} />
-                </div>
+            {/* Rotating Logo with Crypto Name */}
+            {/* Rotating Logo with Crypto Name */}
+            <div className='w-full flex flex-row justify-start items-center mb-8'>
+    <motion.div
+        className='w-24 h-24 bg-white rounded-full flex items-center justify-center text-xl font-bold shadow-xl'
+        animate={{ rotate: 360 }}
+        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+    >
+        <Image
+            src={!data.imageURL ? "/not-available-circle.png" : data.imageURL}
+            alt={data.name || "Crypto Logo"}
+            width={90}
+            height={90}
+            className="rounded-full"
+        />
+    </motion.div>
+    <span className="ml-4 text-4xl tracking-normal font-extrabold text-yellow-500">{crypto.toUpperCase()}</span>
+</div>
 
-                {/* Percentage Changes Section */}
-                <div className="w-full lg:w-1/4 flex flex-col gap-12 mt-6">
-                    {[
-                        { label: "Price Change (24h)", value: data.price_change_percentage_24h_in_currency },
-                        { label: "Price Change (7d)", value: data.price_change_percentage_7d_in_currency },
-                        { label: "Price Change (30d)", value: data.price_change_percentage_30d_in_currency },
-                        { label: "Price Change (1y)", value: data.price_change_percentage_1y_in_currency },
-                    ].map((item, index) => (
-                        <div
-                            key={index}
-                            className="bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-                        >
-                            <h2 className="text-2xl font-semibold text-gray-400 mb-2">{item.label}</h2>
-                            <p className={`text-3xl font-bold ${item.value >= 0 ? "text-green-400" : "text-red-400"}`}>
-                                {item.value.toFixed(2)}%
-                            </p>
-                        </div>
-                    ))}
-                </div>
-            </div>
 
-            {/* Stats Grid */}
-            <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-                {[
-                    { label: "Current Price", value: `${data.current_price} ${vs_currency}` },
-                    { label: "Market Cap", value: `${data.market_cap} ${vs_currency}` },
-                    { label: "Market Cap Rank", value: `#${data.market_cap_rank}` },
-                    { label: "Total Volume", value: `${data.total_volume} ${vs_currency}` },
-                    { label: "24h High / Low", value: `${data.high_24h} / ${data.low_24h} ${vs_currency}` },
-                    { label: "All-Time High", value: `${data.ath} ${vs_currency} (${data.ath_change_percentage.toFixed(2)}%)` },
-                    { label: "Circulating Supply", value: `${data.circulating_supply} ${data.symbol.toUpperCase()}` },
-                    { label: "Total Supply", value: `${data.total_supply} ${data.symbol.toUpperCase()}` },
-                    { label: "Max Supply", value: `${data.max_supply} ${data.symbol.toUpperCase()}` },
-                ].map((item, index) => (
-                    <div
-                        key={index}
-                        className="bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-                    >
-                        <h2 className="text-lg font-semibold text-gray-400 mb-2">{item.label}</h2>
-                        <p className="text-2xl font-bold">{item.value}</p>
+            {/* Content Layout */}
+            <div className='w-full flex gap-6'>
+                {/* Left Side: Graph and Info Boxes */}
+                <div className='flex-1 bg-gray-700 p-6 rounded-xl shadow-lg'>
+                    <h2 className='text-2xl font-bold text-gray-100 mb-4 text-center'>Price Chart</h2>
+                    <div className='w-full h-64 bg-gray-800 rounded-lg shadow-inner mb-72'>
+                        <BitcoinChart symbol={data.symbol} vs_currency={vs_currency} crypto={crypto} />
                     </div>
-                ))}
+                    <div className='grid grid-cols-2 gap-4'>
+                        {["current_price", "market_cap", "market_cap_rank", "total_volume", "high_24h", "low_24h", "ath", "circulating_supply", "total_supply", "max_supply"].map((key, index) => (
+                            <div key={index} className='bg-gray-800 p-4 rounded-lg shadow-md'>
+                                <h2 className='text-lg font-semibold text-gray-400 mb-2'>{key.replace(/_/g, " ").toUpperCase()}</h2>
+                                <p className='text-2xl font-bold text-green-500'>{data[key]} {vs_currency}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Right Side: Prompts and Search Results */}
+                <div className='flex-1 bg-gray-700 p-6 rounded-xl shadow-lg'>
+                    <h2 className='text-3xl font-extrabold text-green-400 mb-4 text-center'>Crypto Information</h2>
+                    <p className='text-lg text-gray-300 leading-relaxed whitespace-pre-line'>{promptData}</p>
+                </div>
             </div>
         </div>
     );

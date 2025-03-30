@@ -133,26 +133,21 @@ const Page = () => {
     };
 
     return (
-        <div className='min-h-screen bg-gradient-to-br flex flex-col items-center justify-center p-4 mt-32'>
-            <div className='bg-gray-900 rounded-3xl shadow-2xl p-8 w-full max-w-2xl transform transition-all hover:shadow-3xl hover:-translate-y-2'>
+        <div className='min-h-screen bg-gradient-to-br flex flex-col items-center justify-center p-4 mt-20'>
+            <div className='bg-gray-900 rounded-3xl shadow-2xl p-4 w-full max-w-2xl transform transition-all hover:shadow-3xl hover:-translate-y-2'>
                 <h1 className='text-4xl font-extrabold text-center text-yellow-400 mb-8 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent'>
                     Crypto-currency Finder
                 </h1>
+                <form onSubmit={handleSubmit} className='flex gap-4 bg-gray-700 p-4 rounded-xl shadow-md'>
+                    <input
+                        type='text'
+                        placeholder='Search for a cryptocurrency...'
+                        value={crypto}
+                        onChange={(e) => setCrypto(e.target.value)}
+                        className='w-full px-4 py-3 bg-gray-800 border-none focus:ring-2 focus:ring-blue-400 rounded-lg text-white'
+                    />
 
-                <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
-                    {/* Modern Search Bar */}
-                    <div className='relative flex items-center bg-gray-100 rounded-xl shadow-sm p-2 w-full'>
-                        <span className='absolute left-4 text-gray-500 text-lg'>🔍</span>
-                        <input
-                            type='text'
-                            placeholder='Search for a cryptocurrency...'
-                            value={crypto}
-                            onChange={(e) => setCrypto(e.target.value)}
-                            className='w-full pl-12 pr-4 py-3 bg-transparent border-none focus:ring-4 focus:ring-blue-400 rounded-xl transition-all text-gray-700 placeholder-gray-500'
-                            aria-label='Enter cryptocurrency name'
-                        />
-
-                        <div className='relative w-full'>
+<div className='relative w-full'>
                             {/* Dropdown Button */}
                             <button
                                 type='button'
@@ -205,20 +200,19 @@ const Page = () => {
                                 </div>
                             )}
                         </div>
-                    </div>
 
                     {error && (
                         <p className='text-red-500 text-sm mt-1 animate-fade-in'>{error}</p>
                     )}
 
-                    {/* Search Button */}
                     <button
                         type='submit'
-                        className='w-full px-4 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-xl hover:from-green-600 hover:to-teal-600 shadow-lg transition-all hover:shadow-xl transform hover:scale-105'
+                        className='px-2 py-1 font-extrabold text-3xl bg-white rounded-full hover:bg-gray-200 transition-all'
                     >
-                        Search
+                        🔎
                     </button>
                 </form>
+            
             </div>
 
             {show && (

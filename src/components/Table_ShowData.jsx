@@ -29,6 +29,7 @@ const TableShowData = ({ vs_currency, pageNumber }) => {
 
         if (response.data) {
           console.log("Data fetched successfully");
+          console.log(response.data.data)
           setData(response.data.data || []);
         }
       } catch (error) {
@@ -101,7 +102,7 @@ const TableShowData = ({ vs_currency, pageNumber }) => {
               >
                 <TableCell className="text-center py-3">
                   <Image
-                    src={imageErrors[coin.id] || !coin.image ? "/not-available-circle.png" : coin.image}
+                    src={imageErrors[coin.id] || !coin.imageURL ? "/not-available-circle.png" : coin.imageURL}
                     alt={coin.name || "Crypto Logo"}
                     width={32}
                     height={32}

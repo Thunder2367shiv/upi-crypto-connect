@@ -117,7 +117,7 @@ export default function Home() {
 
   const handleCurrencySelect = (code) => {
     setVsCurrency(code.toLowerCase());
-    setIsCurrencyDropdownOpen(false); // Close dropdown after selection
+    setIsCurrencyDropdownOpen(false);
   };
 
   return (
@@ -134,16 +134,15 @@ export default function Home() {
       </div>
 
       {/* Currency Select Button and Dropdown */}
-      <div className="w-full max-w-7xl mx-auto mt-8 relative py-8">
+      <div className="w-full max-w-8xl mx-auto mt-8 relative py-8">
         <button
           onMouseEnter={() => setIsCurrencyDropdownOpen(true)}
           onMouseLeave={() => setIsCurrencyDropdownOpen(false)}
           className="w-full md:w-auto px-6 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 shadow-md transition-all text-center"
         >
-          {vs_currencyname + ' '}({vs_currency.toUpperCase()}) ▾
+          {vs_currencyname + " "}({vs_currency.toUpperCase()}) ▾
         </button>
 
-        {/* Dropdown Menu */}
         {isCurrencyDropdownOpen && (
           <div
             className="absolute top-12 left-0 w-full max-w-[90vw] overflow-x-auto bg-gray-100 rounded-lg shadow-lg z-10"
@@ -170,13 +169,13 @@ export default function Home() {
       </div>
 
       {/* Main Table Component */}
-      <div className="w-full max-w-7xl mx-auto mt-8">
+      <div className="w-full max-w-none mx-auto mt-8">
         <div className="w-full p-6 bg-slate-800 rounded-lg shadow-md">
           <h2 className="text-2xl font-extrabold text-yellow-500 text-center mb-6">
             {vs_currency.toUpperCase()} Exchange Rates
           </h2>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto w-full">
             <TableShowData vs_currency={vs_currency} pageNumber={pageNumber} />
           </div>
 
