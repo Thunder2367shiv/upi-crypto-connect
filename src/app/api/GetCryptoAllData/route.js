@@ -8,7 +8,7 @@ export async function POST(request) {
 
     try {
         const { vs_currency, pageNumber } = await request.json();
-        const batchSize = 10; // Fetch 10 coins at a time
+        const batchSize = 8; // Fetch 10 coins at a time
         const start = (pageNumber - 1) * batchSize;
         const end = Math.min(start + batchSize, rawdata.length);
         const savedData = [];

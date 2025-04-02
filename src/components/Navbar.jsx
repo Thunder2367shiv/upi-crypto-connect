@@ -35,7 +35,7 @@ const Navbar = () => {
           <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/Contact">
             Contact
           </Link>
-          <Link className="text-white hover:text-green-400 transition font-bold" href="/buy-upi">
+          <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/Buy_Upi">
             Buy-Crypto
           </Link>
           <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/Explore">

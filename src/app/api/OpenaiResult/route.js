@@ -11,7 +11,7 @@ export async function POST(request) {
     let { prompt } = await request.json(); // Get user input
 
     // Get Gemini model
-    prompt = "Explain About " + prompt + " . Explain at least 4 to 5 paragraph";
+    prompt = "Explain About " + prompt + " . Explain it in about 2.5 to 3 paragraph";
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     
     const result = await model.generateContent(prompt);

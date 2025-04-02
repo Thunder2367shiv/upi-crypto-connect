@@ -4,6 +4,7 @@ import AuthProvider from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
 import PhantomWalletProvider from "@/lib/PhantomWalletProvider";
 import { Toaster } from "@/components/ui/toaster"
+import Chatbot from '@/components/Chatbot';
 // import PayPalProvider from "@/lib/PayPalProvider"; // ✅ Import the new component
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
             <PhantomWalletProvider>
               <Navbar />
               <main>{children}</main>
+              <Chatbot/>
               <Toaster />
             </PhantomWalletProvider>
           </AuthProvider>
