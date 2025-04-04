@@ -174,7 +174,7 @@ const PaymentPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br flex items-center justify-center p-4 md:p-8 mt-14">
+    <div className="min-h-screen bg-gradient-to-br flex items-center justify-center p-4 md:p-8">
       <motion.div
         className="bg-gray-800 backdrop-blur-lg rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-700"
         initial={{ opacity: 0, scale: 0.98 }}

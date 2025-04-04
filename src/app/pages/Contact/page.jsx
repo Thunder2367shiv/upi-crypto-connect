@@ -38,7 +38,7 @@ const ContactPage = () => {
 
     return (
         <motion.div
-            className="h-full pt-32"
+            className="h-full pt-32 bg-white"
             initial={{ y: "-200vh" }}
             animate={{ y: "0%" }}
             transition={{ duration: 1 }}

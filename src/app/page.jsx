@@ -143,7 +143,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b text-white">
       {/* Hero Section */}
       <div className="pt-32 pb-12 px-4 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-black">
           Crypto Market Dashboard
         </h1>
         <p className="text-lg text-gray-700 max-w-2xl mx-auto">
@@ -153,7 +153,7 @@ export default function Home() {
 
       {/* Top Cryptos Section */}
       <div className="px-4">
-        <h2 className="text-2xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-purple-500">
+        <h2 className="text-2xl font-bold mb-2 text-center bg-clip-text text-transparent text-white">
         Hot Right Now - Today's Most Active Cryptos
         </h2>
         <div className="max-w-7xl mx-auto">
