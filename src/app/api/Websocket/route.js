@@ -5,24 +5,22 @@ export async function POST(request) {
     await dbConnect();
 
     try {
-        const { username, email, phone, authProvider } = await request.json();
-        const formattedUsername = username?.toString().toLowerCase() || email.split('@')[0];
+        const { username, email, phone } = await request.json();
+        const formattedUsername = username.toString().toLowerCase();
 
-        // Check if the user already exists (by email)
-        const existingUser = await UserModel.findOne({ email });
+        // Check if the user already exists (by email or phone)
+        const existingUser = await UserModel.findOne({
+            $or: [{ email: email }, { phone: phone }]
+        });
 
         if (existingUser) {
-            // console.log("username: ", username);
-            // console.log("email: ", email)
-            // console.log("phone: ", phone)
             return new Response(
                 JSON.stringify({
                     success: false,
-                    message: "User already exists",
-                    userId: existingUser._id
+                    message: "User already exists"
                 }),
                 {
-                    status: 201,
+                    status: 400,
                     headers: { "Content-Type": "application/json" }
                 }
             );
@@ -32,17 +30,16 @@ export async function POST(request) {
         const newUser = new UserModel({
             username: formattedUsername,
             email,
-            phone: phone || null, // Make phone optional
-            authProvider: authProvider || 'email' // Track sign-up method
+            phone
         });
+
         await newUser.save();
         console.log("User registered successfully");
 
         return new Response(
             JSON.stringify({
                 success: true,
-                message: "Account registered successfully",
-                userId: newUser._id
+                message: "Account registered successfully"
             }),
             {
                 status: 201,
@@ -55,7 +52,7 @@ export async function POST(request) {
         return new Response(
             JSON.stringify({
                 success: false,
-                message: error.message || "Error registering user"
+                message: "Error registering user"
             }),
             {
                 status: 500,

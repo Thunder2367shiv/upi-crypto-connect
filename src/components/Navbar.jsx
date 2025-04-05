@@ -41,7 +41,15 @@ const Navbar = () => {
           <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/Explore">
             Explore
           </Link>
+          {user &&
+            <button
+              href="/pages/UserProfile"
+              className=" text-white hover:text-green-400 transition font-bold"
+            >
+              Profile
+            </button>
 
+          }
           {/* Auth Buttons */}
           {user ? (
             <button
@@ -60,6 +68,7 @@ const Navbar = () => {
               </Link>
             </>
           )}
+
         </div>
 
         {/* Mobile Menu Button */}

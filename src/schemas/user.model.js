@@ -16,16 +16,28 @@ const UserSchema = new mongoose.Schema(
             unique: true,
             lowercase: true,
             match: [/.+\@.+\..+/, "Please use a valid email address"],
-            index: true, // 🔹 Index for faster lookups
+            index: true, 
         },
         phone: {
             type: Number,
-            required: [true, "Phone Number is required"],
             unique: true,
         },
+        Wallet: {
+            type: Number,
+            default: 0,
+        },
+        BankAccounts: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "BankAccount"
+            }
+        ],
+        mpin: {
+            type: String,
+        }
     },
     {
-        timestamps: true, // 🔹 Auto-manages createdAt & updatedAt
+        timestamps: true, 
     }
 );
 

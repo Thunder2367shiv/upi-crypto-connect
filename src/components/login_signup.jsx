@@ -93,13 +93,40 @@ const OtpLogin = () => {
 
   const signInWithGoogle = async () => {
     setLoading(true);
+    setError("");
+    
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      router.push("/");
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      // Prepare user data from Google
+      const userData = {
+        username: user.displayName || user.email.split('@')[0],
+        email: user.email,
+        phone: user.phoneNumber || "", // Google might not provide phone
+        // Add any other fields you need
+      };
+  
+      // Check if user exists in your database or register them
+      const response = await axios.post("/api/RegisterUser", userData);
+      
+      if (response.data.success || 
+          (response.data.message === "User already exists")) {
+            // console.log(response)
+            // console.log(response.data.userId);
+            // console.log("window: ", typeof window)
+            sessionStorage.setItem('userId', response.data.userId);
+            sessionStorage.setItem('username', response.data.username);
+            sessionStorage.setItem('email', response.data.email);
+            sessionStorage.setItem('phone', response.data.phone);
+        router.push("/");
+      } else {
+        throw new Error("Failed to register user in database");
+      }
     } catch (error) {
       console.error("Google sign-in error:", error.message);
-      setError("Google sign-in failed. Please try again.");
+      setError(error.response?.data?.message || "Google sign-in failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -133,7 +160,7 @@ const OtpLogin = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen  p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6">
       <div className="flex flex-col md:flex-row gap-8 w-full max-w-4xl">
         {/* Sign up on Left side */}
         <motion.div
