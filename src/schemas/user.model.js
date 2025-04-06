@@ -34,7 +34,13 @@ const UserSchema = new mongoose.Schema(
         ],
         mpin: {
             type: String,
-        }
+        },
+        TransactionHistory: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "History"
+            }
+        ]
     },
     {
         timestamps: true, 

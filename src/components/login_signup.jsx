@@ -115,7 +115,6 @@ const OtpLogin = () => {
           (response.data.message === "User already exists")) {
             // console.log(response)
             // console.log(response.data.userId);
-            // console.log("window: ", typeof window)
             sessionStorage.setItem('userId', response.data.userId);
             sessionStorage.setItem('username', response.data.username);
             sessionStorage.setItem('email', response.data.email);
