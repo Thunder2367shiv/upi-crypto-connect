@@ -10,25 +10,27 @@ export async function POST(request) {
   await dbConnect();
 
   try {
-    const { Amount, UpiId, userId } = await request.json();
+    const { Amount, userId, transactionSearchId } = await request.json();
+    console.log( Amount, userId, transactionSearchId );
 
-    if (!Amount || !UpiId) {
+    if (!Amount) {
       return new Response(
-        JSON.stringify({ status: false, message: "Amount and UpiId are required." }),
+        JSON.stringify({ status: false, message: "Amount are required." }),
         { status: 400 }
       );
     }
 
     const newTransaction = new transactionModel({
-      UpiId,
+      userId,
       Amount,
+      transactionSearchId,
       status: "pending",
     });
     await newTransaction.save();
 
     const newHistoryTransaction = new TransactionHistoryModel({
         transactionId: newTransaction._id,
-        UpiId,
+        userId,
         Amount,
         status: "pending",
     })
