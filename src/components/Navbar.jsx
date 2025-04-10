@@ -121,13 +121,13 @@ const Navbar = () => {
             <>
               <Link
                 className="block py-3 px-6 text-white bg-green-500 hover:bg-green-600 transition"
-                href="/login"
+                href="/pages/Authenticate"
               >
                 Login
               </Link>
               <Link
                 className="block py-3 px-6 text-white bg-blue-500 hover:bg-blue-600 transition"
-                href="/signup"
+                href="/pages/Authenticate"
               >
                 Signup
               </Link>
