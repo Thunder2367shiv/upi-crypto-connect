@@ -143,10 +143,10 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b text-white">
       {/* Hero Section */}
       <div className="pt-32 pb-12 px-4 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-black">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#7646b6] to-gray-700">
           Crypto Market Dashboard
         </h1>
-        <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-500 max-w-2xl mx-auto">
           Real-time cryptocurrency prices, trends, and market data in your preferred currency
         </p>
       </div>

@@ -3,15 +3,14 @@ import React, { useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { FaBitcoin } from "react-icons/fa";
 import Link from "next/link";
-import { useAuth } from "./AuthProvider"; // Import AuthProvider hook
-import { auth } from "../../firebase"; // Import Firebase auth
+import { useAuth } from "./AuthProvider";
+import { auth } from "../../firebase";
 import { signOut } from "firebase/auth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth(); // Get the authenticated user
+  const { user } = useAuth();
 
-  // Logout function
   const handleLogout = async () => {
     await signOut(auth);
   };
@@ -26,31 +25,31 @@ const Navbar = () => {
             Upi-Crypto-Connect
           </Link>
         </div>
-        <div className="px-10"></div>
+
         {/* Desktop Menu */}
-        <div className=" hidden md:flex space-x-6 items-center">
+        <div className="hidden md:flex space-x-6 items-center">
           <Link className="text-white hover:text-green-400 transition font-bold" href="/">
             Home
           </Link>
           <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/Contact">
             Contact
           </Link>
-          <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/Buy_Upi">
+          <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/Buy_Crypto">
             Buy-Crypto
+          </Link>
+          <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/Buy_Upi">
+            Transfer-Crypto
           </Link>
           <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/Explore">
             Explore
           </Link>
-          {user &&
-            <button
-              href="/pages/UserProfile"
-              className=" text-white hover:text-green-400 transition font-bold"
-            >
-              Profile
-            </button>
 
-          }
-          {/* Auth Buttons */}
+          {user && (
+            <Link className="text-white hover:text-green-400 transition font-bold" href="/pages/UserProfile">
+              Profile
+            </Link>
+          )}
+
           {user ? (
             <button
               onClick={handleLogout}
@@ -59,16 +58,13 @@ const Navbar = () => {
               Logout
             </button>
           ) : (
-            <>
-              <Link
-                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-bold"
-                href="/pages/Authenticate"
-              >
-                Login / Signup
-              </Link>
-            </>
+            <Link
+              className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition font-bold"
+              href="/pages/Authenticate"
+            >
+              Login / Signup
+            </Link>
           )}
-
         </div>
 
         {/* Mobile Menu Button */}
@@ -77,7 +73,7 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-gray-800 absolute w-full left-0 top-full shadow-lg rounded-b-xl">
           <Link
@@ -96,10 +92,17 @@ const Navbar = () => {
           </Link>
           <Link
             className="block py-3 px-6 text-white hover:text-green-400 transition"
-            href="/buy-upi"
+            href="/pages/Buy_Crypto"
             onClick={() => setIsOpen(false)}
           >
-            Buy UPI
+            Buy-Crypto
+          </Link>
+          <Link
+            className="block py-3 px-6 text-white hover:text-green-400 transition"
+            href="/pages/Buy_Upi"
+            onClick={() => setIsOpen(false)}
+          >
+            Transfer-Crypto
           </Link>
           <Link
             className="block py-3 px-6 text-white hover:text-green-400 transition"
@@ -109,10 +112,12 @@ const Navbar = () => {
             Explore
           </Link>
 
-          {/* Auth Buttons in Mobile Menu */}
           {user ? (
             <button
-              onClick={handleLogout}
+              onClick={() => {
+                handleLogout();
+                setIsOpen(false);
+              }}
               className="block w-full text-left py-3 px-6 text-white bg-red-500 hover:bg-red-600 transition"
             >
               Logout
@@ -122,14 +127,9 @@ const Navbar = () => {
               <Link
                 className="block py-3 px-6 text-white bg-green-500 hover:bg-green-600 transition"
                 href="/pages/Authenticate"
+                onClick={() => setIsOpen(false)}
               >
-                Login
-              </Link>
-              <Link
-                className="block py-3 px-6 text-white bg-blue-500 hover:bg-blue-600 transition"
-                href="/pages/Authenticate"
-              >
-                Signup
+                Login / Signup
               </Link>
             </>
           )}

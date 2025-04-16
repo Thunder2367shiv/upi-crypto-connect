@@ -6,7 +6,7 @@ import axios from "axios";
 
 export default function QRScanner() {
   const [scanResult, setScanResult] = useState(null);
-  const [confirmed, setConfirmed] = useState("failed");
+  const [confirmed, setConfirmed] = useState("waiting");
   const [bankAccountId, setBankAccountId] = useState(null);
   const [bankAccounts, setBankAccounts] = useState([]);
   const [userId, setUserId] = useState(null);
@@ -93,7 +93,7 @@ export default function QRScanner() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-8">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8">
       <div className="w-full max-w-lg bg-white shadow-xl rounded-xl p-6">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           QR Code Scan & Pay
@@ -144,6 +144,11 @@ export default function QRScanner() {
               {confirmed === "confirmed" && (
                 <p className="text-green-600 font-semibold text-lg animate-pulse">
                   ✅ Transaction Successful
+                </p>
+              )}
+              {confirmed === "waiting" && (
+                <p className="text-blue-600 font-semibold text-lg">
+                   ⏳ Transaction Waiting
                 </p>
               )}
               {confirmed === "failed" && (

@@ -43,6 +43,7 @@
     "lucide-react": "^0.474.0",
     "mongoose": "^8.10.0",
     "next": "15.1.6",
+    "nodemailer": "^6.10.1",
     "openai": "^4.87.3",
     "paytmchecksum": "^1.5.1",
     "pino-pretty": "^13.0.0",

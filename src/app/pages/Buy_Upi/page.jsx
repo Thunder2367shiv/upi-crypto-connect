@@ -1,18 +1,17 @@
-"use client"
+'use client';
 
 import React, { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { sendSol } from "@/lib/sendSolanaTransaction";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import ConnectWallet from "@/components/ConnectWallet";
-import { Keypair, PublicKey } from "@solana/web3.js";
-import { Connection } from "@solana/web3.js";
-import { useToast } from "@/hooks/use-toast"
-
-
+import { PublicKey, Connection } from "@solana/web3.js";
+import { useToast } from "@/hooks/use-toast";
+import emailjs from "@emailjs/browser";
+import axios from "axios";
 
 const PaymentPage = () => {
-  const { toast } = useToast()
+  const { toast } = useToast();
   const { publicKey, sendTransaction, connected } = useWallet();
   const [amount, setAmount] = useState(1000);
   const [solAmount, setSolAmount] = useState(0);
@@ -21,7 +20,13 @@ const PaymentPage = () => {
   const [txSignature, setTxSignature] = useState(null);
   const [recipientAddress, setRecipientAddress] = useState("");
   const [balance, setBalance] = useState(0);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [userId, setUserId] = useState("");
+
+  // Get userId from session storage
+  useEffect(() => {
+    const storedUserId = sessionStorage.getItem("userId");
+    if (storedUserId) setUserId(storedUserId);
+  }, []);
 
   // Fetch SOL price
   useEffect(() => {
@@ -52,52 +57,45 @@ const PaymentPage = () => {
     fetchBalance();
   }, [connected, publicKey, txSignature]);
 
-  // Update SOL amount when price or INR amount changes
+  // Update SOL amount
   useEffect(() => {
-    if (solPrice) {
-      setSolAmount((amount / solPrice).toFixed(6));
-    }
+    if (solPrice) setSolAmount((amount / solPrice).toFixed(6));
   }, [amount, solPrice]);
 
   const handlePayment = async () => {
     if (!solPrice) {
       toast({
         className: "bg-red-500 text-white rounded-lg p-4 shadow-lg",
-        title: "SOL price not available. Please try again later."
+        title: "SOL price not available",
       });
       return;
     }
     if (!connected || !publicKey) {
       toast({
         className: "bg-red-500 text-white rounded-lg p-4 shadow-lg",
-        title: "Please connect your Phantom Wallet first."
+        title: "Connect your wallet first",
       });
       return;
     }
     if (!recipientAddress) {
       toast({
         className: "bg-red-500 text-white rounded-lg p-4 shadow-lg",
-        title: "Please enter a recipient wallet address."
+        title: "Enter recipient address",
       });
       return;
     }
 
     let recipientPublicKey;
     try {
-      const cleanAddress = recipientAddress.trim();
-      if (cleanAddress.length < 32 || cleanAddress.length > 44) {
-        throw new Error("Address should be 32-44 characters long");
-      }
-      recipientPublicKey = new PublicKey(cleanAddress);
-
+      recipientPublicKey = new PublicKey(recipientAddress.trim());
       if (recipientPublicKey.equals(publicKey)) {
-        throw new Error("Cannot send SOL to yourself");
+        throw new Error("Cannot send to yourself");
       }
     } catch (error) {
       toast({
         className: "bg-red-500 text-white rounded-lg p-4 shadow-lg",
-        title: "Invalid recipient address",
-        description: `Error: ${error.message}`,
+        title: "Invalid address",
+        description: error.message,
       });
       return;
     }
@@ -107,7 +105,7 @@ const PaymentPage = () => {
       toast({
         className: "bg-red-500 text-white rounded-lg p-4 shadow-lg",
         title: "Insufficient balance",
-        description: `You need ${solToSend.toFixed(2)} SOL but only have ${balance.toFixed(2)} SOL.`,
+        description: `Need ${solToSend.toFixed(2)} SOL (You have ${balance.toFixed(2)} SOL)`,
       });
       return;
     }
@@ -117,56 +115,34 @@ const PaymentPage = () => {
       const signature = await sendSol(sendTransaction, publicKey, recipientPublicKey, solToSend);
       setTxSignature(signature);
 
+      // Update balance
       const connection = new Connection("https://api.devnet.solana.com");
       const newBalance = await connection.getBalance(publicKey);
       setBalance(newBalance / 1000000000);
 
-      // alert(`Transaction successful!\nSignature: ${signature}`);
+      // Show success toast
       toast({
         className: "bg-green-500 text-white rounded-lg p-4 shadow-lg",
-        title: (
-          <span className="font-semibold text-lg">
-            Transaction successful
-          </span>
-        ),
+        title: "Payment successful!",
         description: (
-          <div className="space-y-2">
-            <span className="text-sm">
-              Tx: {signature}
-            </span>
-            <br />
-            <a
+          <div>
+            <p>Sent {solAmount} SOL</p>
+            <a 
               href={`https://explorer.solana.com/tx/${signature}?cluster=devnet`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-white flex items-center space-x-1"
+              className="text-white underline"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                />
-              </svg>
-              <span>View on Solana Explorer</span>
+              View transaction
             </a>
           </div>
         ),
       });
-      
-
-
     } catch (error) {
       toast({
+        className: "bg-red-500 text-white rounded-lg p-4 shadow-lg",
         title: "Payment failed",
-        description: `Error: ${error.message}`,
+        description: error.message,
       });
     } finally {
       setIsProcessing(false);
@@ -176,7 +152,7 @@ const PaymentPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br flex items-center justify-center p-4 md:p-8">
       <motion.div
-        className="bg-gray-800 backdrop-blur-lg rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-700"
+        className="bg-gradient-to-t from-cyan-900 to-black backdrop-blur-lg mt-28 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-700"
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
@@ -185,11 +161,9 @@ const PaymentPage = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-white">
-                <span className="text-purple-400">UPI</span> Crypto Connect
+                <span className="text-purple-700">Online</span> <span className="text-white">Crypto Transfer</span>
               </h1>
-              <p className="text-gray-400 text-sm mt-1">
-                Fast and secure SOL transfers
-              </p>
+              <p className="text-gray-200 text-sm mt-1">Fast and secure SOL transfers</p>
             </div>
             <ConnectWallet />
           </div>
@@ -202,14 +176,14 @@ const PaymentPage = () => {
             >
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-xs ">Connected Wallet</p>
-                  <p className="text-sm font-mono ">
+                  <p className="text-xs">Connected Wallet</p>
+                  <p className="text-sm font-mono">
                     {`${publicKey.toString().slice(0, 4)}...${publicKey.toString().slice(-4)}`}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs ">Balance</p>
-                  <p className="text-sm font-bold text-red-600 ">
+                  <p className="text-xs">Balance</p>
+                  <p className="text-sm font-bold text-red-600">
                     {balance.toFixed(2)} SOL
                   </p>
                 </div>
@@ -219,7 +193,7 @@ const PaymentPage = () => {
 
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-100 mb-2">
                 Amount (INR)
               </label>
               <div className="relative">
@@ -254,7 +228,7 @@ const PaymentPage = () => {
             <div className="bg-gray-100 p-4 rounded-lg border border-gray-600">
               <div className="flex justify-between text-sm text-black mb-2">
                 <span className="text-sm font-semibold">Current SOL Price:</span>
-                <span className="font-medium text-green-500 ">
+                <span className="font-medium text-green-500">
                   {solPrice ? `₹ ${solPrice.toFixed(2)}` : "Loading..."}
                 </span>
               </div>
@@ -268,11 +242,12 @@ const PaymentPage = () => {
 
             <button
               onClick={handlePayment}
-              disabled={!connected || !solPrice || !recipientAddress}
-              className={`w-full py-3.5 rounded-lg font-medium transition-all ${!connected || !solPrice || !recipientAddress
+              disabled={!connected || !solPrice || !recipientAddress || isProcessing}
+              className={`w-full py-3.5 rounded-lg font-medium transition-all ${
+                !connected || !solPrice || !recipientAddress || isProcessing
                   ? "bg-gray-600 cursor-not-allowed text-gray-400"
                   : "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white shadow-lg hover:shadow-purple-500/20"
-                }`}
+              }`}
             >
               {isProcessing ? (
                 <span className="flex items-center justify-center">
@@ -287,14 +262,10 @@ const PaymentPage = () => {
               )}
             </button>
           </div>
-
-          <div className="mt-6 text-center text-xs text-gray-500">
-            <p>Secured by Solana Pay</p>
-          </div>
         </div>
       </motion.div>
     </div>
   );
 };
 
-export default PaymentPage;
+export default PaymentPage;  

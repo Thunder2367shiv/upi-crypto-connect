@@ -166,7 +166,7 @@ const OtpLogin = () => {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-gray-900/90 backdrop-blur-sm shadow-2xl rounded-xl p-8 w-full md:w-1/2 transition-all duration-300 ease-in-out hover:scale-105 border border-gray-700 border-r-0"
+          className="bg-gradient-to-t from-black to-cyan-900 backdrop-blur-sm shadow-2xl rounded-xl p-8 w-full md:w-1/2 transition-all duration-300 ease-in-out hover:scale-105 border border-gray-700 border-r-0"
         >
           {showLogin ? (
             <h1
@@ -193,7 +193,7 @@ const OtpLogin = () => {
                     onChange={(e) => setusername(e.target.value)}
                     required
                   />
-                  <User className="absolute left-4 top-2 text-gray-500 w-6 h-6" />
+                  <User className="absolute left-4 top-2 text-gray-200 w-6 h-6" />
                 </div>
                 {/* Email */}
                 <div className="relative">
@@ -205,7 +205,7 @@ const OtpLogin = () => {
                     onChange={(e) => setemail(e.target.value)}
                     required
                   />
-                  <Mail className="absolute left-4 top-2 text-gray-500 w-6 h-6" />
+                  <Mail className="absolute left-4 top-2 text-gray-200 w-6 h-6" />
                 </div>
                 {/* Phone Number Input */}
                 <div className="relative">
@@ -217,7 +217,7 @@ const OtpLogin = () => {
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     required
                   />
-                  <Phone className="absolute left-4 top-2 text-gray-500 w-6 h-6" />
+                  <Phone className="absolute left-4 top-2 text-gray-200 w-6 h-6" />
                 </div>
 
                 {/* Buttons */}
@@ -251,7 +251,7 @@ const OtpLogin = () => {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-gray-900/90 backdrop-blur-sm shadow-2xl rounded-xl p-8 w-full md:w-1/2 transition-all duration-300 ease-in-out hover:scale-105 border border-gray-700 border-l-0"
+          className="bg-gradient-to-t from-black to-cyan-900 backdrop-blur-sm shadow-2xl rounded-xl p-8 w-full md:w-1/2 transition-all duration-300 ease-in-out hover:scale-105 border border-gray-700 border-l-0"
         >
           {showLogin ? (
             <>
@@ -310,7 +310,7 @@ const OtpLogin = () => {
                   <Button
                     onClick={signInWithGoogle}
                     disabled={loading}
-                    className="flex items-center justify-center gap-3 bg-green-400/50 hover:bg-green-500/70 text-black font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg disabled:opacity-50"
+                    className="flex items-center justify-center gap-3 bg-white hover:bg-green-500/70 text-black font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg disabled:opacity-50"
                   >
                     {loading ? <Loader2 className="animate-spin w-5 h-5" /> : "Sign in with Google"}
                   </Button>

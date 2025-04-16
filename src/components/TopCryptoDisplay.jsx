@@ -55,7 +55,7 @@ const TopCryptoDisplay = () => {
           >
             <Card
               className={`border overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 ${
-                 "bg-gradient-to-b from-black to-gray-500 border-green-500/30"
+                 "bg-gradient-to-b from-[#0e2949] to-gray-800 border-green-500/30"
               }`}
             >
               <CardHeader className="items-center">
