@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
           <AuthProvider>
             <PhantomWalletProvider>
               <Navbar />
-              <main className="bg-gradient-to-r from-cyan-500 via-gray-800 to-black animate-gradient-x">{children}</main>
+              <main className="bg-gradient-to-t from-green-100  via-cyan-900  to-black animate-gradient-x">{children}</main>
               <Chatbot/>
               <Toaster />
             </PhantomWalletProvider>

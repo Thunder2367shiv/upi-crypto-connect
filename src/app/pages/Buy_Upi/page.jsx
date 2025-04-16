@@ -176,7 +176,7 @@ const PaymentPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br flex items-center justify-center p-4 md:p-8">
       <motion.div
-        className="bg-gray-800 backdrop-blur-lg rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-700"
+        className="bg-gradient-to-t from-cyan-900 to-black backdrop-blur-lg mt-28 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-700"
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
@@ -185,9 +185,9 @@ const PaymentPage = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-white">
-                <span className="text-purple-400">UPI</span> Crypto Connect
+                <span className="text-purple-700">Online</span> <span className="text-white">Crypto Transfer</span>
               </h1>
-              <p className="text-gray-400 text-sm mt-1">
+              <p className="text-gray-200 text-sm mt-1">
                 Fast and secure SOL transfers
               </p>
             </div>
@@ -219,7 +219,7 @@ const PaymentPage = () => {
 
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-100 mb-2">
                 Amount (INR)
               </label>
               <div className="relative">
@@ -286,10 +286,6 @@ const PaymentPage = () => {
                 <>{!connected ? "Connect Wallet First" : "Send SOL"}</>
               )}
             </button>
-          </div>
-
-          <div className="mt-6 text-center text-xs text-gray-500">
-            <p>Secured by Solana Pay</p>
           </div>
         </div>
       </motion.div>
