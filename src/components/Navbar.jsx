@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { FaBitcoin } from "react-icons/fa";
 import Link from "next/link";
@@ -9,7 +9,12 @@ import { signOut } from "firebase/auth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth();
+  const [user, setIsuser] = useState(false)
+
+  useEffect(() => {
+    const storedUserId = sessionStorage.getItem("userId");
+    setIsuser(storedUserId ? true : false);
+  }, []);
 
   const handleLogout = async () => {
     await signOut(auth);
