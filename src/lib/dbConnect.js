@@ -4,7 +4,7 @@ const connection = {};
 
 async function dbConnect() {
     if (connection.isConnected) {
-        console.log("Already connected to database");
+        // console.log("Already connected to database");
         return;
     }
 
@@ -12,9 +12,9 @@ async function dbConnect() {
         const db = await mongoose.connect(process.env.MONGODB_URI || "", {});
         connection.isConnected = db.connections[0].readyState;
 
-        console.log("DB Connected Successfully");
+        // console.log("DB Connected Successfully");
     } catch (error) {
-        console.log("DB Connection Failed", error);
+        // console.log("DB Connection Failed", error);
         process.exit(1);
     }
 }

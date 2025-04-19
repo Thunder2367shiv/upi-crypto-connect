@@ -21,7 +21,7 @@ export async function GET() {
 
         return new Response(JSON.stringify({ status: true, topCoins }), { status: 200 });
     } catch (error) {
-        console.error("Error:", error.message);
+        // console.error("Error:", error.message);
         return new Response(JSON.stringify({ status: false, message: error.message }), { status: 400 });
     }
 }

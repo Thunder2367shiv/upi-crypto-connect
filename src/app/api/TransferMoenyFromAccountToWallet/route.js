@@ -31,7 +31,7 @@ export async function POST(request) {
         existing_User.Wallet += requestedAmount;
         await existing_User.save();
 
-        console.log("Amount transferred successfully");
+        // console.log("Amount transferred successfully");
 
         return new Response(
             JSON.stringify({ status: true, message: "Amount transferred successfully" }),

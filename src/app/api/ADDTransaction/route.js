@@ -11,7 +11,7 @@ export async function POST(request) {
 
   try {
     const { Amount, userId, transactionSearchId } = await request.json();
-    console.log( Amount, userId, transactionSearchId );
+    // console.log( Amount, userId, transactionSearchId );
 
     if (!Amount) {
       return new Response(

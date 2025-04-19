@@ -70,7 +70,7 @@ export async function POST(request) {
                 { upsert: true, new: true } // Prevent duplicate key errors
             );
 
-            console.log(`Updated record for ${crypto}`);
+            // // console.log(`Updated record for ${crypto}`);
         }
 
         return new Response(
@@ -78,7 +78,7 @@ export async function POST(request) {
             { status: 200 }
         );
     } catch (error) {
-        console.error("Error:", error.message);
+        // // console.error("Error:", error.message);
         return new Response(JSON.stringify({ status: false, message: error.message }), { status: 400 });
     }
 }

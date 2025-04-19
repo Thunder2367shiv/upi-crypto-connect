@@ -30,7 +30,7 @@ export async function POST(request) {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     
     const result = await model.generateContent(prompt);
-    // console.log(result.response.text());
+    // // console.log(result.response.text());
     const nowresult = result.response.text()
 
     return new Response(

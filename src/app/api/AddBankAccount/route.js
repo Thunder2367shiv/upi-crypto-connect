@@ -48,7 +48,7 @@ export async function POST(request) {
         user.BankAccounts.push(newAccount._id);
         await user.save();
 
-        console.log("Account Added successfully");
+        // console.log("Account Added successfully");
 
         return new Response(
             JSON.stringify({ status: true, message: "Bank account added successfully", data: newAccount }),

@@ -26,7 +26,7 @@ export async function POST(request) {
         { status: 404 }
       );
     }
-    console.log("existingTransaction: ", existingTransaction);
+    // console.log("existingTransaction: ", existingTransaction);
     // Update transaction
     const updatedTransaction = await transactionModel.findOneAndUpdate(
       { transactionSearchId },
@@ -38,7 +38,7 @@ export async function POST(request) {
       { new: true }
     );
 
-    console.log("updatedTransaction: ", updatedTransaction);
+    // console.log("updatedTransaction: ", updatedTransaction);
 
     // Update transaction history
     const updatedHistory = await TransactionHistoryModel.findOneAndUpdate(
@@ -71,7 +71,7 @@ export async function POST(request) {
     );
 
   } catch (error) {
-    console.error("Transaction update error:", error);
+    // console.error("Transaction update error:", error);
     return NextResponse.json(
       { status: false, message: error.message },
       { status: 500 }

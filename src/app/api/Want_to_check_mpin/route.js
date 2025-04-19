@@ -51,7 +51,7 @@ export async function POST(request) {
         );
 
     } catch (error) {
-        console.error("Error getting user:", error);
+        // console.error("Error getting user:", error);
         return new Response(
             JSON.stringify({
                 success: false,

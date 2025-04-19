@@ -38,7 +38,7 @@ export async function POST(request) {
         // Process the transaction
         existing_Bank_Account.Amount -= requestedAmount;
         await existing_Bank_Account.save();
-        console.log("Amount transferred successfully");
+        // console.log("Amount transferred successfully");
 
         // Send email confirmation
         if (existing_User.email) {
@@ -91,9 +91,9 @@ export async function POST(request) {
                   
 
                 await transporter.sendMail(mailOptions);
-                console.log('Email sent successfully');
+                // console.log('Email sent successfully');
             } catch (emailError) {
-                console.error('Failed to send email:', emailError);
+                // console.error('Failed to send email:', emailError);
                 // Don't fail the request if email fails
             }
         }

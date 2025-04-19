@@ -22,7 +22,7 @@ export async function POST(request) {
 
         for (let i = start; i < end; i += batchSize) {
             const ids = rawdata.slice(i, i + batchSize).map((coin) => coin.id).join(",");
-            console.log("Fetching data for IDs:", ids);
+            // console.log("Fetching data for IDs:", ids);
 
             const url = "https://api.coingecko.com/api/v3/coins/markets";
             const { data } = await axios.get(url, {
@@ -33,7 +33,7 @@ export async function POST(request) {
                 },
             });
 
-            console.log("Received data:", data);
+            // console.log("Received data:", data);
 
             for (const coin of data) {
                 const existingRecord = await DigitalCurrency.findOne({ id: coin.id });
@@ -43,7 +43,7 @@ export async function POST(request) {
                     const lastUpdatedDate = new Date(existingRecord.last_updated);
                     const currentDate = new Date(coin.last_updated);
                     if (!isNaN(lastUpdatedDate.getTime()) && lastUpdatedDate.toISOString() === currentDate.toISOString()) {
-                        console.log(`Skipping update for ${coin.id} as data is already up to date.`);
+                        // console.log(`Skipping update for ${coin.id} as data is already up to date.`);
                         savedData.push(existingRecord);
                         continue;
                     }
@@ -51,7 +51,7 @@ export async function POST(request) {
 
                 if (existingRecord) {
                     await DigitalCurrency.deleteOne({ _id: existingRecord._id });
-                    console.log(`Deleted old record for ${coin.id}`);
+                    // console.log(`Deleted old record for ${coin.id}`);
                 }
 
                 const savedCoin = await DigitalCurrency.create({
@@ -94,7 +94,7 @@ export async function POST(request) {
             { status: 200 }
         );
     } catch (error) {
-        console.error("Error:", error.message);
+        // console.error("Error:", error.message);
         return new Response(JSON.stringify({ status: false, message: error.message }), { status: 400 });
     }
 }

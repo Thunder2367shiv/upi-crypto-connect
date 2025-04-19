@@ -12,9 +12,9 @@ export async function POST(request) {
         const existingUser = await UserModel.findOne({ email });
 
         if (existingUser) {
-            // console.log("username: ", username);
-            // console.log("email: ", email)
-            // console.log("phone: ", phone)
+            // // console.log("username: ", username);
+            // // console.log("email: ", email)
+            // // console.log("phone: ", phone)
             return new Response(
                 JSON.stringify({
                     success: false,
@@ -36,7 +36,7 @@ export async function POST(request) {
             authProvider: authProvider || 'email' // Track sign-up method
         });
         await newUser.save();
-        console.log("User registered successfully");
+        // console.log("User registered successfully");
 
         return new Response(
             JSON.stringify({
@@ -51,7 +51,7 @@ export async function POST(request) {
         );
 
     } catch (error) {
-        console.error("Error registering user:", error);
+        // console.error("Error registering user:", error);
         return new Response(
             JSON.stringify({
                 success: false,
