@@ -91,7 +91,7 @@ const CryptoDashboard = ({ vs_currency, pageNumber, onPageChange }) => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white">Crypto Market</h1>
-          <p className="text-gray-900">Real-time cryptocurrency prices and trends</p>
+          <p className="text-gray-300">Real-time cryptocurrency prices and trends</p>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">

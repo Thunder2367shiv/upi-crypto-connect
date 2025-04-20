@@ -3,21 +3,34 @@ import React, { useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { FaBitcoin } from "react-icons/fa";
 import Link from "next/link";
-import { useAuth } from "./AuthProvider";
 import { auth } from "../../firebase";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setIsuser] = useState(false)
+  const [user, setIsuser] = useState(false);
 
   useEffect(() => {
-    const storedUserId = sessionStorage.getItem("userId");
-    setIsuser(storedUserId ? true : false);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        sessionStorage.setItem("userId", currentUser.uid);
+        setIsuser(true);
+      } else {
+        sessionStorage.removeItem("userId");
+        setIsuser(false);
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup on unmount
   }, []);
 
   const handleLogout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+      setIsuser(false);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
@@ -117,6 +130,16 @@ const Navbar = () => {
             Explore
           </Link>
 
+          {user && (
+            <Link
+              className="block py-3 px-6 text-white hover:text-green-400 transition"
+              href="/pages/UserProfile"
+              onClick={() => setIsOpen(false)}
+            >
+              Profile
+            </Link>
+          )}
+
           {user ? (
             <button
               onClick={() => {
@@ -128,15 +151,13 @@ const Navbar = () => {
               Logout
             </button>
           ) : (
-            <>
-              <Link
-                className="block py-3 px-6 text-white bg-green-500 hover:bg-green-600 transition"
-                href="/pages/Authenticate"
-                onClick={() => setIsOpen(false)}
-              >
-                Login / Signup
-              </Link>
-            </>
+            <Link
+              className="block py-3 px-6 text-white bg-green-500 hover:bg-green-600 transition"
+              href="/pages/Authenticate"
+              onClick={() => setIsOpen(false)}
+            >
+              Login / Signup
+            </Link>
           )}
         </div>
       )}

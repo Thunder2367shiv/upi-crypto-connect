@@ -37,22 +37,12 @@ const OtpLogin = () => {
   }, [resendCountdown]);
 
   useEffect(() => {
-    if (!recaptchaVerifier && typeof window !== "undefined") {
-      if (!window.recaptchaVerifierInitialized) {
-        const verifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-          size: "invisible",
-        });
-        setRecaptchaVerifier(verifier);
-        window.recaptchaVerifierInitialized = true;
-      }
+    if (!recaptchaVerifier) {
+      const verifier = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
+      setRecaptchaVerifier(verifier);
     }
-  
-    return () => {
-      recaptchaVerifier?.clear();
-      window.recaptchaVerifierInitialized = false;
-    };
+    return () => recaptchaVerifier?.clear();
   }, []);
-  
 
   useEffect(() => {
     if (otp.length === 6) {
