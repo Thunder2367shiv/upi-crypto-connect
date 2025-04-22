@@ -221,7 +221,15 @@ const CryptoDashboard = ({ vs_currency, pageNumber, onPageChange }) => {
                         </div>
                       </div>
                       
-                      <button className="flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm transition-colors">
+                      <button className="flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm transition-colors"
+                      onClick={() => {
+                        // Pass vs_currency and crypto to new tab
+                        window.open(
+                          `/pages/InfoPage?vs_currency=${encodeURIComponent(vs_currency.toUpperCase())}&crypto=${encodeURIComponent(coin.name)}`,
+                          '_blank'
+                        );
+                      }}
+                      >
                         Explore <FiArrowUpRight className="ml-1" />
                       </button>
                     </div>

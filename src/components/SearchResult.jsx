@@ -17,31 +17,48 @@ const SearchResult = ({ vs_currency = "inr", crypto = "bitcoin" }) => {
             try {
                 setLoading(true);
                 setError(null);
+                setData(null);
+                setPromptData("");
 
-                // Fetch coin stats
-                const [statsResponse, infoResponse] = await Promise.all([
-                    axios.post("/api/GetStats", { vs_currency, crypto }),
-                    axios.post("/api/OpenaiResult", { prompt: crypto })
-                ]);
-
-                if (statsResponse.data?.status) {
-                    setData(statsResponse.data.data);
-                } else {
-                    throw new Error("No valid data received from stats API");
+                // Validate inputs
+                if (!crypto || typeof crypto !== 'string') {
+                    throw new Error("Please enter a valid cryptocurrency name");
                 }
 
-                if (infoResponse.data?.data) {
-                    setPromptData(infoResponse.data.data);
+                // Make API calls
+                const statsResponse = await axios.post("/api/GetStats", {
+                    vs_currency: vs_currency.toLowerCase(),
+                    crypto: crypto.toLowerCase()
+                });
+
+                if (!statsResponse.data?.status) {
+                    throw new Error(statsResponse.data?.message || "Failed to fetch cryptocurrency data");
                 }
+
+                // Only fetch AI info if stats were successful
+                const infoResponse = await axios.post("/api/OpenaiResult", {
+                    prompt: crypto.toLowerCase()
+                });
+
+                setData(statsResponse.data.data);
+                setPromptData(infoResponse.data?.data || "No description available.");
             } catch (err) {
-                setError(err.message || "Failed to fetch data");
-                console.error("Fetch error:", err);
+                console.error("API Error:", err);
+                setError(err.response?.data?.message || 
+                       err.message || 
+                       "Failed to fetch data. Please try a different cryptocurrency.");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchData();
+        // Only fetch if we have valid inputs
+        if (crypto && vs_currency) {
+            fetchData();
+        } else {
+            setError("Cryptocurrency and currency are required");
+            setLoading(false);
+        }
     }, [vs_currency, crypto]);
 
     if (loading) {
@@ -86,9 +103,8 @@ const SearchResult = ({ vs_currency = "inr", crypto = "bitcoin" }) => {
         );
     }
 
-    // Format large numbers
     const formatNumber = (num) => {
-        if (!num) return "N/A";
+        if (!num && num !== 0) return "N/A";
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
             currency: vs_currency.toUpperCase(),
@@ -111,7 +127,6 @@ const SearchResult = ({ vs_currency = "inr", crypto = "bitcoin" }) => {
 
     return (
         <div className="min-h-screen text-white bg-gradient-to-br from-gray-900 to-gray-800 p-4 md:p-8 rounded-lg">
-            {/* Header Section */}
             <header className="flex flex-col md:flex-row items-center mb-8 gap-6">
                 <motion.div
                     className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-full flex-shrink-0 shadow-xl"
@@ -139,9 +154,7 @@ const SearchResult = ({ vs_currency = "inr", crypto = "bitcoin" }) => {
                 </div>
             </header>
 
-            {/* Main Content */}
             <main className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left Column - Chart */}
                 <section className="bg-gray-800/50 rounded-xl p-6 shadow-lg">
                     <h2 className="text-2xl font-bold text-center mb-6 text-gray-100">
                         Price Chart ({vs_currency.toUpperCase()})
@@ -155,7 +168,6 @@ const SearchResult = ({ vs_currency = "inr", crypto = "bitcoin" }) => {
                     </div>
                 </section>
 
-                {/* Right Column - Info */}
                 <section className="bg-gray-800/50 rounded-xl p-6 shadow-lg">
                     <div className="flex border-b border-gray-700 mb-6">
                         <button
@@ -199,7 +211,6 @@ const SearchResult = ({ vs_currency = "inr", crypto = "bitcoin" }) => {
                 </section>
             </main>
 
-            {/* Price Change Indicators */}
             <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[1, 24, 7, 30, 90, 365].map((hours) => {
                     const key = `price_change_percentage_${hours}h`;
@@ -221,7 +232,6 @@ const SearchResult = ({ vs_currency = "inr", crypto = "bitcoin" }) => {
                                     {value >= 0 ? '+' : ''}{value.toFixed(2)}%
                                 </p>
                             </div>
-
                         </div>
                     );
                 })}

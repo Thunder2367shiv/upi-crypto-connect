@@ -21,7 +21,7 @@ export async function POST(request) {
                     error: jsonError.message 
                 }),
                 { 
-                    status: 400,
+                    status: 401,
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -41,7 +41,7 @@ export async function POST(request) {
                     message: "pageNumber must be a number" 
                 }),
                 { 
-                    status: 400,
+                    status: 402,
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -61,7 +61,7 @@ export async function POST(request) {
                     maxPages: totalPages
                 }),
                 { 
-                    status: 400,
+                    status: 403,
                     headers: {
                         'Content-Type': 'application/json'
                     }

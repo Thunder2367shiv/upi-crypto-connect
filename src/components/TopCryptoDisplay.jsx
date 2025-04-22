@@ -10,6 +10,9 @@ const TopCryptoDisplay = () => {
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Set this to your default currency
+  const vs_currency = "INR";
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -45,7 +48,7 @@ const TopCryptoDisplay = () => {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
       {coins.map((coin, i) => {
         const isUp = coin.price_change_percentage_24h >= 0;
-        
+
         return (
           <motion.div
             key={coin.id}
@@ -53,11 +56,7 @@ const TopCryptoDisplay = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
           >
-            <Card
-              className={`border overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 ${
-                 "bg-gradient-to-b from-[#0e2949] to-gray-800 border-green-500/30"
-              }`}
-            >
+            <Card className="border overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 bg-gradient-to-b from-[#0e2949] to-gray-800 border-green-500/30">
               <CardHeader className="items-center">
                 <Image
                   src={coin.image}
@@ -82,7 +81,16 @@ const TopCryptoDisplay = () => {
               </CardContent>
 
               <CardFooter>
-                <button className="w-full flex items-center justify-center gap-2 p-2 bg-gradient-to-b from-yellow-900 to-yellow-500 hover:bg-yellow-600 rounded-lg transition-all">
+                <button
+                  onClick={() => {
+                    // Pass vs_currency and crypto to new tab
+                    window.open(
+                      `/pages/InfoPage?vs_currency=${encodeURIComponent(vs_currency)}&crypto=${encodeURIComponent(coin.id)}`,
+                      '_blank'
+                    );
+                  }}
+                  className="w-full flex items-center justify-center gap-2 p-2 bg-gradient-to-b from-yellow-900 to-yellow-500 hover:bg-yellow-600 rounded-lg transition-all"
+                >
                   Explore <ArrowUpRight size={16} />
                 </button>
               </CardFooter>
