@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import axios from "axios";
+import bcrypt from 'bcryptjs';  // Make sure to install bcryptjs
 
 export default function QRScanner() {
   const [scanResult, setScanResult] = useState(null);
@@ -11,6 +12,8 @@ export default function QRScanner() {
   const [bankAccounts, setBankAccounts] = useState([]);
   const [userId, setUserId] = useState(null);
   const [upiId, setUpiId] = useState(null);
+  const [mpin, setMpin] = useState(null);
+  const [userInputMpin, setUserInputMpin] = useState("");  // State to capture user input
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");
@@ -25,6 +28,12 @@ export default function QRScanner() {
           userId,
         });
         setBankAccounts(response.data.data || []);
+
+        const responsempin = await axios.post("/api/GetUserData", {
+          userId,
+        });
+        console.log("responsempin: ", responsempin);
+        setMpin(responsempin.data.data.mpin);  // Assuming mpin is stored as a hashed value
       } catch (error) {
         console.error("Error fetching bank accounts:", error.message);
         setConfirmed("failed");
@@ -58,9 +67,23 @@ export default function QRScanner() {
     return () => scanner.clear();
   }, []);
 
+  // Function to check if the entered MPIN matches the hashed MPIN
+  const checkMpin = async () => {
+    const isMatch = await bcrypt.compare(userInputMpin, mpin);
+    return isMatch;
+  };
+
+  // Handle payment after MPIN verification
   const handlePay = async () => {
     if (!scanResult || !bankAccountId || !upiId) {
       alert("Please select a bank account");
+      return;
+    }
+
+    // First check if the entered MPIN matches
+    const isMpinValid = await checkMpin();
+    if (!isMpinValid) {
+      alert("Invalid MPIN. Please try again.");
       return;
     }
 
@@ -132,6 +155,18 @@ export default function QRScanner() {
                 </option>
               ))}
             </select>
+
+            {/* MPIN Input */}
+            <label className="block mb-2 font-semibold text-gray-700">
+              Enter MPIN:
+            </label>
+            <input
+              type="password"
+              className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={userInputMpin}
+              onChange={(e) => setUserInputMpin(e.target.value)}
+              placeholder="Enter your MPIN"
+            />
 
             <button
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition duration-200"
