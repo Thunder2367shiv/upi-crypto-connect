@@ -98,8 +98,8 @@ const Chatbot = () => {
                 <Image
                   src="/chatbot.png"
                   alt="Chatbot icon"
-                  width={28}
-                  height={28}
+                  width={20}
+                  height={20}
                   className="rounded-full"
                 />
                 <h2 className="font-semibold text-lg">Chat Assistant</h2>

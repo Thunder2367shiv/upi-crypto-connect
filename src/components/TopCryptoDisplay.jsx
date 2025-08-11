@@ -2,16 +2,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { ArrowUpRight, TrendingUp, TrendingDown } from "lucide-react";
 import Image from "next/image";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { FiArrowUpRight } from "react-icons/fi";
 
 const TopCryptoDisplay = () => {
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Set this to your default currency
-  const vs_currency = "INR";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,72 +25,64 @@ const TopCryptoDisplay = () => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[1, 2, 3].map((i) => (
-          <Card key={i} className="bg-gray-900/50 backdrop-blur-lg border-gray-700">
-            <div className="animate-pulse p-6 space-y-4">
-              <div className="h-16 w-16 rounded-full bg-gray-700 mx-auto" />
-              <div className="h-6 w-3/4 bg-gray-700 rounded mx-auto" />
-              <div className="h-4 w-1/2 bg-gray-700 rounded mx-auto" />
-              <div className="h-10 w-full bg-gray-700 rounded-lg mt-4" />
-            </div>
-          </Card>
+          <div key={i} className="bg-gray-900/50 rounded-xl p-6 h-72 animate-pulse border border-gray-800" />
         ))}
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {coins.map((coin, i) => {
         const isUp = coin.price_change_percentage_24h >= 0;
+        const changeColor = isUp ? "text-green-400" : "text-red-400";
+        const changeIcon = isUp ? "▲" : "▼";
 
         return (
           <motion.div
             key={coin.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
+            transition={{ delay: i * 0.1, duration: 0.3 }}
           >
-            <Card className="border overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 bg-gradient-to-b from-[#0e2949] to-gray-800 border-green-500/30">
-              <CardHeader className="items-center">
-                <Image
-                  src={coin.image}
-                  alt={coin.name}
-                  width={64}
-                  height={64}
-                  className="rounded-full"
-                />
-              </CardHeader>
+            <div className="bg-gray-900/50 rounded-xl p-6 h-full flex flex-col border border-gray-800 hover:border-gray-700 transition-colors group">
+              <div className="flex items-center mb-6">
+                <div className="relative w-12 h-12 mr-4">
+                  <Image
+                    src={coin.image}
+                    alt={coin.name}
+                    fill
+                    className="rounded-full object-cover"
+                  />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold">{coin.name}</h3>
+                  <p className="text-gray-400">{coin.symbol.toUpperCase()}</p>
+                </div>
+              </div>
 
-              <CardContent className="text-center">
-                <h3 className="text-xl font-bold text-yellow-400">
-                  {coin.name} <span className="text-gray-400">({coin.symbol.toUpperCase()})</span>
-                </h3>
-                <p className="text-2xl my-2 text-white font-bold">
+              <div className="mb-6">
+                <p className="text-3xl font-bold mb-2">
                   ₹{coin.current_price.toLocaleString()}
                 </p>
-                <div className={`flex items-center justify-center gap-1 ${isUp ? 'text-green-400' : 'text-red-400'}`}>
-                  {isUp ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                  {coin.price_change_percentage_24h.toFixed(2)}%
+                <div className={`flex items-center ${changeColor}`}>
+                  <span className="mr-1">{changeIcon}</span>
+                  <span>{coin.price_change_percentage_24h.toFixed(2)}%</span>
                 </div>
-              </CardContent>
+              </div>
 
-              <CardFooter>
+              <div className="mt-auto">
                 <button
-                  onClick={() => {
-                    // Pass vs_currency and crypto to new tab
-                    window.open(
-                      `/pages/InfoPage?vs_currency=${encodeURIComponent(vs_currency)}&crypto=${encodeURIComponent(coin.id)}`,
-                      '_blank'
-                    );
-                  }}
-                  className="w-full flex items-center justify-center gap-2 p-2 bg-gradient-to-b from-yellow-900 to-yellow-500 hover:bg-yellow-600 rounded-lg transition-all"
+                  onClick={() => window.open(`/pages/InfoPage?crypto=${coin.id}`, '_blank')}
+                  className="w-full flex items-center justify-center py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg hover:opacity-90 transition-opacity"
                 >
-                  Explore <ArrowUpRight size={16} />
+                  <span>View Details</span>
+                  <FiArrowUpRight className="ml-2" />
                 </button>
-              </CardFooter>
-            </Card>
+              </div>
+            </div>
           </motion.div>
         );
       })}

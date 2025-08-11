@@ -1,110 +1,9 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import SearchResult from '@/components/SearchResult';
+import popularCurrencies from "@/context/popularCurrencies";
 
-const currencyList = [
-    { "code": "AED", "name": "United Arab Emirates Dirham" },
-    { "code": "AFN", "name": "Afghan Afghani" },
-    { "code": "ALL", "name": "Albanian Lek" },
-    { "code": "AMD", "name": "Armenian Dram" },
-    { "code": "ANG", "name": "Netherlands Antillean Guilder" },
-    { "code": "AOA", "name": "Angolan Kwanza" },
-    { "code": "ARS", "name": "Argentine Peso" },
-    { "code": "AUD", "name": "Australian Dollar" },
-    { "code": "AWG", "name": "Aruban Florin" },
-    { "code": "AZN", "name": "Azerbaijani Manat" },
-    { "code": "BAM", "name": "Bosnia-Herzegovina Convertible Mark" },
-    { "code": "BBD", "name": "Barbadian Dollar" },
-    { "code": "BDT", "name": "Bangladeshi Taka" },
-    { "code": "BGN", "name": "Bulgarian Lev" },
-    { "code": "BHD", "name": "Bahraini Dinar" },
-    { "code": "BIF", "name": "Burundian Franc" },
-    { "code": "BMD", "name": "Bermudian Dollar" },
-    { "code": "BND", "name": "Brunei Dollar" },
-    { "code": "BOB", "name": "Bolivian Boliviano" },
-    { "code": "BRL", "name": "Brazilian Real" },
-    { "code": "BSD", "name": "Bahamian Dollar" },
-    { "code": "BTN", "name": "Bhutanese Ngultrum" },
-    { "code": "BWP", "name": "Botswana Pula" },
-    { "code": "BYN", "name": "Belarusian Ruble" },
-    { "code": "BZD", "name": "Belize Dollar" },
-    { "code": "CAD", "name": "Canadian Dollar" },
-    { "code": "CDF", "name": "Congolese Franc" },
-    { "code": "CHF", "name": "Swiss Franc" },
-    { "code": "CLP", "name": "Chilean Peso" },
-    { "code": "CNY", "name": "Chinese Yuan" },
-    { "code": "COP", "name": "Colombian Peso" },
-    { "code": "CRC", "name": "Costa Rican Colón" },
-    { "code": "CUP", "name": "Cuban Peso" },
-    { "code": "CVE", "name": "Cape Verdean Escudo" },
-    { "code": "CZK", "name": "Czech Koruna" },
-    { "code": "DJF", "name": "Djiboutian Franc" },
-    { "code": "DKK", "name": "Danish Krone" },
-    { "code": "DOP", "name": "Dominican Peso" },
-    { "code": "DZD", "name": "Algerian Dinar" },
-    { "code": "EGP", "name": "Egyptian Pound" },
-    { "code": "ERN", "name": "Eritrean Nakfa" },
-    { "code": "ETB", "name": "Ethiopian Birr" },
-    { "code": "EUR", "name": "Euro" },
-    { "code": "FJD", "name": "Fijian Dollar" },
-    { "code": "GBP", "name": "British Pound Sterling" },
-    { "code": "GEL", "name": "Georgian Lari" },
-    { "code": "GHS", "name": "Ghanaian Cedi" },
-    { "code": "GIP", "name": "Gibraltar Pound" },
-    { "code": "GMD", "name": "Gambian Dalasi" },
-    { "code": "GNF", "name": "Guinean Franc" },
-    { "code": "GTQ", "name": "Guatemalan Quetzal" },
-    { "code": "GYD", "name": "Guyanese Dollar" },
-    { "code": "HKD", "name": "Hong Kong Dollar" },
-    { "code": "HNL", "name": "Honduran Lempira" },
-    { "code": "HRK", "name": "Croatian Kuna" },
-    { "code": "HTG", "name": "Haitian Gourde" },
-    { "code": "HUF", "name": "Hungarian Forint" },
-    { "code": "IDR", "name": "Indonesian Rupiah" },
-    { "code": "ILS", "name": "Israeli New Shekel" },
-    { "code": "INR", "name": "Indian Rupee" },
-    { "code": "IQD", "name": "Iraqi Dinar" },
-    { "code": "IRR", "name": "Iranian Rial" },
-    { "code": "ISK", "name": "Icelandic Króna" },
-    { "code": "JMD", "name": "Jamaican Dollar" },
-    { "code": "JOD", "name": "Jordanian Dinar" },
-    { "code": "JPY", "name": "Japanese Yen" },
-    { "code": "KES", "name": "Kenyan Shilling" },
-    { "code": "KGS", "name": "Kyrgyzstani Som" },
-    { "code": "KHR", "name": "Cambodian Riel" },
-    { "code": "KMF", "name": "Comorian Franc" },
-    { "code": "KRW", "name": "South Korean Won" },
-    { "code": "KWD", "name": "Kuwaiti Dinar" },
-    { "code": "KZT", "name": "Kazakhstani Tenge" },
-    { "code": "LAK", "name": "Lao Kip" },
-    { "code": "LBP", "name": "Lebanese Pound" },
-    { "code": "LKR", "name": "Sri Lankan Rupee" },
-    { "code": "LRD", "name": "Liberian Dollar" },
-    { "code": "LSL", "name": "Lesotho Loti" },
-    { "code": "LYD", "name": "Libyan Dinar" },
-    { "code": "MAD", "name": "Moroccan Dirham" },
-    { "code": "MDL", "name": "Moldovan Leu" },
-    { "code": "MGA", "name": "Malagasy Ariary" },
-    { "code": "MKD", "name": "Macedonian Denar" },
-    { "code": "MMK", "name": "Burmese Kyat" },
-    { "code": "MNT", "name": "Mongolian Tögrög" },
-    { "code": "MOP", "name": "Macanese Pataca" },
-    { "code": "MUR", "name": "Mauritian Rupee" },
-    { "code": "MVR", "name": "Maldivian Rufiyaa" },
-    { "code": "MXN", "name": "Mexican Peso" },
-    { "code": "MYR", "name": "Malaysian Ringgit" },
-    { "code": "NGN", "name": "Nigerian Naira" },
-    { "code": "NOK", "name": "Norwegian Krone" },
-    { "code": "NZD", "name": "New Zealand Dollar" },
-    { "code": "PHP", "name": "Philippine Peso" },
-    { "code": "PKR", "name": "Pakistani Rupee" },
-    { "code": "PLN", "name": "Polish Złoty" },
-    { "code": "SGD", "name": "Singapore Dollar" },
-    { "code": "USD", "name": "United States Dollar" },
-    { "code": "ZAR", "name": "South African Rand" }
-];
-
-const popularCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'INR', 'CNY', 'CAD', 'AUD'];
+const storedCurrency = ['USD', 'EUR', 'GBP', 'JPY', 'INR', 'CNY', 'CAD', 'AUD'];
 
 const Page = () => {
     const [vsCurrency, setVsCurrency] = useState('inr');
@@ -127,7 +26,7 @@ const Page = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const filteredCurrencies = currencyList.filter((coin) =>
+    const filteredCurrencies = popularCurrencies.filter((coin) =>
         coin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         coin.code.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -150,7 +49,7 @@ const Page = () => {
         setIsLoading(false);
     };
 
-    const selectedCurrency = currencyList.find(c => c.code.toLowerCase() === vsCurrency.toLowerCase());
+    const selectedCurrency = popularCurrencies.find(c => c.code.toLowerCase() === vsCurrency.toLowerCase());
 
     return (
         <div className='min-h-screen bg-gradient-to-br flex flex-col items-center p-4 pt-24 md:pt-32'>
@@ -229,8 +128,8 @@ const Page = () => {
                                             <div className='px-2 py-1'>
                                                 <p className='text-xs text-gray-400 uppercase tracking-wider px-2 py-1'>Popular</p>
                                                 <div className='flex flex-wrap gap-1 p-1'>
-                                                    {popularCurrencies.map(code => {
-                                                        const currency = currencyList.find(c => c.code === code);
+                                                    {storedCurrency.map(code => {
+                                                        const currency = popularCurrencies.find(c => c.code === code);
                                                         return (
                                                             <button
                                                                 key={code}
