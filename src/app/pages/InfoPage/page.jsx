@@ -1,28 +1,40 @@
 "use client";
 
-import SearchResult from '@/components/SearchResult';
-import { useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import SearchResult from "@/components/SearchResult";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const InfoPage = () => {
-    const searchParams = useSearchParams();
-    const [currency, setCurrency] = useState('');
-    const [crypto, setCrypto] = useState('');
+  const searchParams = useSearchParams();
+  const [currency, setCurrency] = useState("");
+  const [crypto, setCrypto] = useState("");
+  const [isMounted, setIsMounted] = useState(false);
 
-    useEffect(() => {
-        const currencyParam = searchParams.get('vs_currency');
-        const cryptoParam = searchParams.get('crypto');
-        setCurrency(currencyParam || 'No currency received');
-        setCrypto(cryptoParam || 'No crypto received');
-    }, [searchParams]);
+  useEffect(() => {
+    setIsMounted(true); // ✅ ensures client-only logic runs after mount
+  }, []);
 
-    return (
-        <div className="min-h-screen pt-24 px-4 md:px-10 lg:px-20 ">
-            <div className="max-w mx-auto w-full mt-12 animate-fade-in-up">
-                <SearchResult vs_currency={currency} crypto={crypto} />
-            </div>
-        </div>
-    );
+  useEffect(() => {
+    if (!isMounted) return; // skip until client ready
+
+    const currencyParam = searchParams.get("vs_currency");
+    const cryptoParam = searchParams.get("crypto");
+
+    setCurrency(currencyParam || "No currency received");
+    setCrypto(cryptoParam || "No crypto received");
+  }, [isMounted, searchParams]);
+
+  if (!isMounted) {
+    return null; // or loading UI
+  }
+
+  return (
+    <div className="min-h-screen pt-24 px-4 md:px-10 lg:px-20 ">
+      <div className="max-w mx-auto w-full mt-12 animate-fade-in-up">
+        <SearchResult vs_currency={currency} crypto={crypto} />
+      </div>
+    </div>
+  );
 };
 
 export default InfoPage;
